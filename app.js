@@ -51,6 +51,8 @@ const tasks = [
 
   renderAllTasks(objOfTasks);
   form.addEventListener('submit', onFormSubmitHandler);
+  //Повесили обработчик событий на все кнопки Delete на click
+  listContainer.addEventListener('click', onDeletehandler);
 
   // Работа с объектом и создание фрагмента, и добавлением фрагмента на страницу
   function renderAllTasks(tasksList) {
@@ -80,6 +82,7 @@ const tasks = [
       'flex-wrap',
       'mt-2'
     );
+    li.setAttribute('data-task-id', _id);
     const span = document.createElement('span'); // Title task'а
     span.textContent = title;
     span.style.fontWeight = 'bold';
@@ -144,5 +147,29 @@ const tasks = [
 
     // console.log(objOfTasks);
     return { ...newTask }; // Возвращаем newTask путем Деструктуризации
+  }
+  // Подтверждение действий и возврат true/false
+  function deleteTask(id) {
+    const isConfirm = confirm('Вы уверены, что хотите удалить?');
+
+    if (!isConfirm) return isConfirm;
+    delete objOfTasks[id];
+    return isConfirm;
+  }
+
+  // Удаление из HTML элемента
+  function deleteTaskFromHtml(confirmed, el) {
+    if (!confirmed) return;
+    //удаления из html
+    el.remove();
+  }
+  // Поиск нужного элемента и его родителя
+  function onDeletehandler({ target }) {
+    if (target.classList.contains('delete-btn')) {
+      const parent = target.closest('[data-task-id]');
+      const id = parent.dataset.taskId;
+      const confirmed = deleteTask(id);
+      const deleteParent = deleteTaskFromHtml(confirmed, parent);
+    }
   }
 })(tasks);
